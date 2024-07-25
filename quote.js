@@ -1,4 +1,4 @@
-import fs, { readFile } from "node:fs/promises";
+import fs, { readFile, writeFile } from "node:fs/promises";
 import { v4 as uuidv4 } from "uuid";
 
 const fileName = "quotes.json";
@@ -14,7 +14,22 @@ export async function getQuotes() {
   }
 }
 
-export async function addQuote(quoteText) {}
+export async function addQuote(quoteText) {
+  try {
+    const quote = {
+      id: uuidv4(),
+      quoteText: quoteText,
+    };
+    const data = await readFile(fileName, "utf8");
+    const parsedData = JSON.parse(data);
+    parsedData.push(quote);
+    await writeFile(fileName, JSON.stringify(parsedData), "utf-8");
+    console.log("Data: " + parsedData);
+    return quote;
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 export async function getRandomQuote() {}
 
